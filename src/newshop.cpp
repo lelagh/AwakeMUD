@@ -1758,6 +1758,11 @@ void shop_list(char *arg, struct char_data *ch, struct char_data *keeper, vnum_t
                has_negotiatable ? " negotiation" : "");
     }
 
+	// Add info about negotiation
+	if (SHOULD_SEE_TIPS(ch) && !has_negotiatable) {
+	  snprintf(ENDOF(buf), sizeof(buf), "This shop does not allow negotiation tests.\r\n");
+    }
+
     page_string(ch->desc, buf, 1);
     return;
   }
