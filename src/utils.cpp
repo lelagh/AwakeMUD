@@ -768,6 +768,11 @@ char *capitalize(const char *source)
   if (index >= len)
     return dest;
 
+  // if the string starts with a URL, don't capitalize it
+  if (!strn_cmp(dest + index, "https://", 8) ||
+      !strn_cmp(dest + index, "http://", 7))
+    return dest;
+
   *(dest + index) = UPPER(*(dest + index));
 
   return dest;
