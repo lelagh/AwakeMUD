@@ -104,26 +104,38 @@ void set_temp_social_flag(struct room_data *room, struct char_data *setter) {
   room->room_flags.SetBit(ROOM_ENCOURAGE_CONGREGATION);
 }
 
+void clear_temp_social_flag(struct room_data *room, struct char_data *clearer) {
+  if (!room)
+    return;
+
+  if (clearer) {
+    mudlog_vfprintf(clearer, LOG_WIZLOG, "%s deleted temp social flag @ %s (%ld)",
+                        GET_CHAR_NAME(clearer),
+                        GET_ROOM_NAME(room),
+                        GET_ROOM_VNUM(room));
+  } else {
+    mudlog_vfprintf(NULL, LOG_MISCLOG, "Cleaning up temp social flag @ %s (%ld).", GET_ROOM_NAME(room), GET_ROOM_VNUM(room));
+  }
+
+  room->room_flags.RemoveBit(ROOM_ENCOURAGE_CONGREGATION);
+  room->temp_social_room = FALSE;
+}
+
 void clear_temp_desc(struct room_data *room, struct char_data *clearer) {
   if (!room)
     return;
 
   if (clearer) {
-    mudlog_vfprintf(clearer, LOG_WIZLOG, "%s deleted temp room desc%s @ %s (%ld)", 
-                        room->temp_social_room ? "/social flag" : "",
+    mudlog_vfprintf(clearer, LOG_WIZLOG, "%s deleted temp room desc @ %s (%ld)", 
                         GET_CHAR_NAME(clearer),
                         GET_ROOM_NAME(room),
                         GET_ROOM_VNUM(room));
   } else {
-    mudlog_vfprintf(NULL, LOG_MISCLOG, "Cleaning up temp room desc%s @ %s (%ld).",
-                        room->temp_social_room ? "/social flag" : "",
-                        GET_ROOM_NAME(room),
-                        GET_ROOM_VNUM(room));
+    mudlog_vfprintf(NULL, LOG_MISCLOG, "Cleaning up temp room desc @ %s (%ld).", GET_ROOM_NAME(room), GET_ROOM_VNUM(room));
   }
 
   if (room->temp_social_room) {
-    room->room_flags.RemoveBit(ROOM_ENCOURAGE_CONGREGATION);
-    room->temp_social_room = FALSE;
+    clear_temp_social_flag(room, clearer);
   }
 
   DELETE_AND_NULL_ARRAY(room->temp_desc);
@@ -181,8 +193,12 @@ ACMD(do_tempdesc) {
 
     // A tempdesc with the social flag will be set to the default expiry time (8 hours, above)
     if (!str_cmp(argument, "social")) {
-      set_temp_social_flag(ch->in_room, ch);
+      if (!ch->in_room->temp_social_room)
+        set_temp_social_flag(ch->in_room, ch);
     } else {
+      if (ch->in_room->temp_social_room)
+        clear_temp_social_flag(ch->in_room, ch);
+
       minutes_to_expiry = atoi(argument);
     }
 
