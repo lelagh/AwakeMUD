@@ -451,6 +451,7 @@ struct char_player_data
   text_data matrix_text;
 
   char *background;
+  char *consent;
   char *title;               /* PC / NPC's title                     */
   char *pretitle, *whotitle; /* PC's pre/whotitles                   */
   char *prompt, *matrixprompt;              /* PC's customized prompt               */
@@ -474,7 +475,7 @@ struct char_player_data
   char *host;   /* player host    */
 
   char_player_data() :
-      char_name(NULL), background(NULL), title(NULL), pretitle(NULL), whotitle(NULL),
+      char_name(NULL), background(NULL), consent(NULL), title(NULL), pretitle(NULL), whotitle(NULL),
       prompt(NULL), matrixprompt(NULL), poofin(NULL), poofout(NULL), email(NULL),
       multiplier(100), salvation_ticks(5), pronouns(PRONOUNS_NEUTRAL), level(0), last_room(NOWHERE),
       weight(0), height(0), race(0), otaku_path(OTAKU_PATH_NORMIE), tradition(TRAD_MUNDANE), aspect(0), host(NULL)

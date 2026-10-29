@@ -505,6 +505,9 @@ void string_add(struct descriptor_data *d, char *str)
     } else if (STATE(d) == CON_BCUSTOMIZE && d->edit_mode == CEDIT_DESC) {
       REPLACE_STRING(d->edit_mob->player.background);
       cedit_disp_menu(d, 0);
+      } else if (STATE(d) == CON_CCUSTOMIZE && d->edit_mode == CEDIT_DESC) {
+      REPLACE_STRING(d->edit_mob->player.consent);
+      cedit_disp_menu(d, 0);
     } else if (STATE(d) == CON_PCUSTOMIZE || STATE(d) == CON_ACUSTOMIZE || STATE(d) == CON_FCUSTOMIZE) {
       switch(d->edit_mode) {
       case CEDIT_LONG_DESC:

@@ -3032,6 +3032,7 @@ void nanny(struct descriptor_data * d, char *arg)
   case CON_BCUSTOMIZE:
   case CON_PCUSTOMIZE:
   case CON_ACUSTOMIZE:
+  case CON_CCUSTOMIZE:
     cedit_parse(d, arg);
     break;
   case CON_PC_EXDESC_EDIT:

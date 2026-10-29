@@ -1,0 +1,1 @@
+ALTER TABLE `pfiles` ADD `consent` text NOT NULL AFTER `RestrictedSysPoints`;

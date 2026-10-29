@@ -2641,10 +2641,12 @@ ACMD(do_customize)
       return;
     }
     STATE(ch->desc) = CON_ACUSTOMIZE;
-  } else if (is_abbrev(argument, "background"))
+  } else if (is_abbrev(argument, "background")) {
     STATE(ch->desc) = CON_BCUSTOMIZE;
-  else {
-    send_to_char(ch, "Usage: customize <persona/physical%s/background>, e.g. CUSTOMIZE PHYSICAL\r\n", 
+  } else if (is_abbrev(argument, "consent")) {
+    STATE(ch->desc) = CON_CCUSTOMIZE;
+  } else {
+    send_to_char(ch, "Usage: customize <persona/physical%s/background/consent>, e.g. CUSTOMIZE PHYSICAL\r\n", 
                  (GET_TRADITION(ch) == TRAD_SHAMANIC || GET_TRADITION(ch) == TRAD_HERMETIC) && GET_ASPECT(ch) == ASPECT_FULL ? "/reflection" : "");
     return;
   }
@@ -2661,6 +2663,8 @@ void cedit_disp_menu(struct descriptor_data *d, int mode)
   CLS(CH);
   if (STATE(d) == CON_BCUSTOMIZE) {
     send_to_char(CH, "1) Character Background: ^c%s^n", d->edit_mob->player.background);
+  } else if (STATE(d) == CON_CCUSTOMIZE) {
+    send_to_char(CH, "1) Consent sheet: ^c%s^n", d->edit_mob->player.consent);
   } else {
     send_to_char(CH, "1) Alias: %s%s%s\r\n", CCCYN(CH, C_CMP),
                  d->edit_mob->player.physical_text.keywords, CCNRM(CH, C_CMP));
@@ -2735,6 +2739,8 @@ void cedit_parse(struct descriptor_data *d, char *arg)
 
       if (STATE(d) == CON_BCUSTOMIZE)
         d->edit_mob->player.background = str_dup(CH->player.background);
+      else if (STATE(d) == CON_CCUSTOMIZE)
+        d->edit_mob->player.consent = str_dup(CH->player.consent);
       else if (STATE(d) == CON_FCUSTOMIZE) {
         d->edit_mob->player.physical_text.keywords =
           str_dup(CH->player.physical_text.keywords);
@@ -2797,6 +2803,10 @@ void cedit_parse(struct descriptor_data *d, char *arg)
         DELETE_ARRAY_IF_EXTANT(CH->player.background);
         CH->player.background = str_dup(d->edit_mob->player.background);
         snprintf(ENDOF(buf2), sizeof(buf2) - strlen(buf2), "background='%s'", prepare_quotes(buf3, CH->player.background, sizeof(buf3) / sizeof(buf3[0])));
+      } else if (STATE(d) == CON_CCUSTOMIZE) {
+        DELETE_ARRAY_IF_EXTANT(CH->player.consent);
+        CH->player.consent = str_dup(d->edit_mob->player.consent);
+        snprintf(ENDOF(buf2), sizeof(buf2) - strlen(buf2), "consent='%s'", prepare_quotes(buf3, CH->player.consent, sizeof(buf3) / sizeof(buf3[0])));
       } else if (STATE(d) == CON_FCUSTOMIZE) {
 
         DELETE_ARRAY_IF_EXTANT(CH->player.physical_text.keywords);
@@ -2911,7 +2921,7 @@ void cedit_parse(struct descriptor_data *d, char *arg)
       break;
 
     case '1':
-      if (STATE(d) == CON_BCUSTOMIZE) {
+      if ((STATE(d) == CON_BCUSTOMIZE)|| (STATE(d) == CON_CCUSTOMIZE)) {
         d->edit_mode = CEDIT_DESC;
         DELETE_D_STR_IF_EXTANT(d);
         INITIALIZE_NEW_D_STR(d);

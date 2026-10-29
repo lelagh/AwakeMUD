@@ -636,6 +636,7 @@ void boot_world(void)
   require_that_sql_table_exists("pfiles_stowed", "SQL/Migrations/hammerspace.sql");
   require_that_field_exists_in_table("garnishment_nuyen", "pfiles", "SQL/Migrations/add_garnishments.sql");
   require_that_field_exists_in_table("RestrictedSysPoints", "pfiles", "SQL/Migrations/add_bound_sysp.sql");
+  require_that_field_exists_in_table("consent", "pfiles", "SQL/Migrations/add_consent_sheets.sql");
 
   {
     const char *object_tables[4] = {
@@ -5752,6 +5753,7 @@ void free_char(struct char_data * ch)
   {
     DELETE_ARRAY_IF_EXTANT(ch->player.char_name);
     DELETE_ARRAY_IF_EXTANT(ch->player.background);
+    DELETE_ARRAY_IF_EXTANT(ch->player.consent);
     DELETE_ARRAY_IF_EXTANT(ch->player.title);
     DELETE_ARRAY_IF_EXTANT(ch->player.pretitle);
     DELETE_ARRAY_IF_EXTANT(ch->player.whotitle);

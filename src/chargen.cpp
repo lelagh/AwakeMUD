@@ -1068,12 +1068,12 @@ void init_char_sql(struct char_data *ch, const char *call_origin)
   char buf2[MAX_STRING_LENGTH];
   snprintf(buf, sizeof(buf), "INSERT INTO pfiles (`idnum`, `name`, `password`, `race`, `gender`, `Rank`, `Voice`,"\
                "`Physical_Keywords`, `Physical_Name`, `Whotitle`, `Height`, `Weight`, `Host`,"\
-               "`Tradition`, `otaku_path`, `Born`, `Background`, `Physical_LookDesc`, `Matrix_LookDesc`, `Astral_LookDesc`, `LastD`, `multiplier`) VALUES ('%ld', '%s', '%s', %d, '%d',"\
-               "'%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%ld', '%s', '%s', '%s', '%s', %ld, 100);", GET_IDNUM(ch),
+               "`Tradition`, `otaku_path`, `Born`, `Background`, `Physical_LookDesc`, `Matrix_LookDesc`, `Astral_LookDesc`, `consent`, `LastD`, `multiplier`) VALUES ('%ld', '%s', '%s', %d, '%d',"\
+               "'%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%d', '%d', '%ld', '%s', '%s', '%s', '%s', '%s', %ld, 100);", GET_IDNUM(ch),
                GET_CHAR_NAME(ch), GET_PASSWD(ch), GET_RACE(ch), GET_PRONOUNS(ch), MAX(1, GET_LEVEL(ch)),
                prepare_quotes(buf2, ch->player.physical_text.room_desc, sizeof(buf2) / sizeof(buf2[0])), GET_KEYWORDS(ch), GET_NAME(ch), GET_WHOTITLE(ch),
                GET_HEIGHT(ch), GET_WEIGHT(ch), ch->player.host, GET_TRADITION(ch), GET_OTAKU_PATH(ch), ch->player.time.birth, "A blank slate.",
-               "A nondescript person.\r\n", "A nondescript entity.\r\n", "A nondescript entity.\r\n", time(0));
+               "A nondescript person.\r\n", "A nondescript entity.\r\n", "A nondescript entity.\r\n", "No consent sheet has been filled in.", time(0));
   mysql_wrapper(mysql, buf);
   if (PLR_FLAGGED(ch, PLR_NOT_YET_AUTHED)) {
     set_exdesc_max(ch, 2, TRUE);

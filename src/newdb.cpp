@@ -194,6 +194,9 @@ static void init_char_strings(char_data *ch)
   delete [] ch->player.background;
   ch->player.background = str_dup("(no background provided yet)\n");
 
+  delete [] ch->player.consent;
+  ch->player.consent = str_dup("(no consent sheet provided yet)\n");
+
   delete [] ch->char_specials.arrive;
   ch->char_specials.arrive = str_dup("arrives from");
 
@@ -484,6 +487,7 @@ bool load_char(const char *name, char_data *ch, bool logon, int pc_load_origin)
   GET_GARNISHMENT_REP(ch) = atol(row[87]);
   GET_GARNISHMENT_NOTOR(ch) = atol(row[88]);
   GET_RESTRICTED_SYSTEM_POINTS(ch) = atol(row[89]);
+  ch->player.consent = str_dup(cleanup_invalid_color_codes(row[90]));
   mysql_free_result(res);
 
   // Update lifestyle information.

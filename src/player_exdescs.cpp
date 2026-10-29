@@ -11,6 +11,7 @@
 #include "olc.hpp"
 #include "moderation.hpp"
 #include "player_exdescs.hpp"
+#include "consent.hpp"
 
 /* 
   PCs can have exdescs. They're edited during CUSTOMIZE PHYSICAL with a new 'extra descriptions' menu.
@@ -49,6 +50,8 @@ void list_exdescs(struct char_data *viewer, struct char_data *vict, bool list_is
 class PCExDesc *find_exdesc_by_keyword(struct char_data *ch, const char *keyword, bool allow_fuzzy_match=TRUE);
 bool delete_exdesc_by_keyword(struct char_data *ch, const char *keyword);
 void save_pc_exdesc_max(struct char_data *ch);
+
+extern void get_consent_sheet(struct char_data *ch, struct char_data *vict);
 
 /*
  * Staff DO_EXDESC command.
@@ -545,7 +548,13 @@ bool look_at_exdescs(struct char_data *viewer, struct char_data *vict, char *key
     return TRUE;
   }
 
-  // Case 3: String has a valid keyword. Show that exdesc. Return TRUE.
+  // Case 3: String is CONSENT, we're hijacking the exdesc code to show their consent sheet
+  if (!str_cmp(keyword, "consent")) {
+    get_consent_sheet(viewer, vict);
+    return TRUE;
+  }
+
+  // Case 4: String has a valid keyword. Show that exdesc. Return TRUE.
   if (display_exdesc(viewer, vict, keyword)) {
     return TRUE;
   }
@@ -845,6 +854,12 @@ void pc_exdesc_edit_parse(struct descriptor_data *d, const char *arg) {
             send_to_char(CH, "Sorry, keywords can only contain letters and underscores ('%c' is invalid). Try again: ", arg[idx]);
             return;
           }
+        }
+
+        // Direct people to CUSTOMIZE CONSENT, since it would be unviewable as an exdesc.
+        if (!str_cmp(arg, "consent")) {
+          send_to_char(CH, "To create a consent sheet, please use the CUSTOMIZE CONSENT command. Try again: ");
+          return;
         }
 
         if (check_for_banned_content(arg, CH, MODERATION_MODE_CHARACTER_DESCRIPTIONS)) {
